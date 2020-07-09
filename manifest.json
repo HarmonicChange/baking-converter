@@ -1,0 +1,11 @@
+{
+  "name": "Baking Converter",
+  "version": "1.0",
+  "description": "Automatically detects baking ingredients and measurements on webpages and converts them to the desired units.",
+  "permissions": ["activeTab"],
+  "content_scripts": [ {
+      "matches": ["<all_urls>"],
+      "js": ["content.js"]
+    } ],
+  "manifest_version": 2
+}
