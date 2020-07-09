@@ -1,6 +1,17 @@
-// console.log("Content script running");
+var allHTMLTags = document.getElementsByTagName('*'); // Returns an HTMLCollection of all tags in the document
+var htmlTagsAsArray = Array.prototype.slice.call(allHTMLTags); // Converts to array
 
-var documentAsHTML = document.getElementsByTagName('html').innerHTML;
-console.log(documentAsHTML); // returns an HTMLCollection
+// Keep HTML that (1) has no children (2) has innerHTML and (3) is not a script tag
+var filteredHTML = htmlTagsAsArray.filter(node => node.childElementCount == 0 && node.innerHTML && node.tagName != "SCRIPT");
+console.log(filteredHTML);
 
-// TODO Get HTML tags with no children.
+// Contains words that we will "know" how to convert. Includes measurements and ingredients
+var vocabulary = ["cup", "cups",
+    "ounce", "ounces", "oz",
+    "teaspoon", "teaspoons", "tspn",
+    "flour", "bread flour", "cake flour", "all purpose flour"];
+
+// Loop through filtered elements and find any occurrences of vocabulary
+//for (var i = 0; i < filteredHTML.length; i++) {
+
+//}

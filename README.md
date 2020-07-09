@@ -1,5 +1,4 @@
-# Baking Converter
-## Chrome Extension (WIP)
+# Baking Converter - Chrome Extension (WIP)
 
 A Chrome Extension that will automatically detect ingredients on websites and convert them to the desired units.
 
