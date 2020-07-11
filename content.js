@@ -3,25 +3,31 @@ var htmlTagsAsArray = Array.prototype.slice.call(allHTMLTags); // Converts to ar
 
 // Keep HTML that (1) has no children (2) has innerHTML and (3) is not a script tag
 var filteredHTML = htmlTagsAsArray.filter(node => node.childElementCount == 0 && node.innerHTML && node.tagName != "SCRIPT");
-console.log(filteredHTML);
+//console.log(filteredHTML);
 
-// Loop through inneHTML and find phrases that we will convert
-//for (var i = 0; i < filteredHTML.length; i++) {
+// Assemble regular expression from defined vocabulary
+var matchingRegex = assembleRegexFromVocab();
 
-//}
+// Loop through innerHTML and find phrases that we will convert
+for (var i = 0; i < filteredHTML.length; i++) {
+  var matchingStringArr = filteredHTML[i].innerHTML.match(new RegExp(matchingRegex));
+  if(matchingStringArr != null) {
+    console.log(matchingStringArr);
+  }
+}
 
 // Uses vocabulary we define to build a regular expression for detecting our desired phrases.
 function assembleRegexFromVocab () {
   // Make sure to start with the LONGEST version of the word first!
   var measurements_vocab = ["cups", "cup",
       "ounces", "ounce", "oz",
-      "teaspoons", "teaspoon", "tspn",
+      "teaspoons", "teaspoon", "tspns", "tspn", "tsp",
       "tablespoons", "tablespoon", "tbspn", "tbsp"];
-  var ingredients_vocab = ["bread flour", "cake flour", "all purpose flour", "flour",
-      "brown sugar", "granulated sugar", "cane sugar", "sugar"];
+  var ingredients_vocab = ["bread\\ flour", "cake\\ flour", "all\\ purpose\\ flour", "flour",
+      "brown\\ sugar", "granulated\\ sugar", "cane\\ sugar", "sugar"];
 
   // Assemble a regex string that will match "[fraction/digit] [measurement vocab] [ingredient vocab]"
-  var myRegexString = "/(\d{1,2}\/\d{1,2}|\d{1,2}) ("; // Start with a fraction or digit
+  var myRegexString = "(\\d{1,2}\\/\\d{1,2}|\\d{1,2}) ("; // Start with a fraction or digit, double backslashes needed as escape
   for (var i = 0; i < measurements_vocab.length; i++) {
     if (i == 0) { // On first iteration, we don't add the | symbol for the regex
       myRegexString += measurements_vocab[i];
@@ -29,17 +35,16 @@ function assembleRegexFromVocab () {
       myRegexString += "|" + measurements_vocab[i];
     }
   }
-  myRegexString += ") (";
+  myRegexString += ") ("; // Add the first space
   for (var i = 0; i < ingredients_vocab.length; i++) {
     if (i == 0) { // On first iteration, we don't add the | symbol for the regex
       myRegexString += ingredients_vocab[i];
     } else { // Otherwise, we or the rest of the words
-      myRegexString += "|\b" + ingredients_vocab[i];
+      myRegexString += "|" + ingredients_vocab[i];
     }
   }
-  myRegexString += ")/i";
+  myRegexString += ")";
 
-  // Return the string as a regular expression
-  console.log(myRegexString);
-  return new RegExp(myRegexString);
+  // Return the string as a regular expression.
+  return new RegExp(myRegexString, "ig"); // i = case-insensitive, 'g' = global search (find all matches)
 }
