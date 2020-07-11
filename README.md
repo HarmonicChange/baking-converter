@@ -12,5 +12,6 @@ This script uses regular expressions to match ingredients on websites. Currently
 * The first regex group doesn't account for mixed fractions (like "1 1/2").
 * The entire phrase is contained within the innerHTML of a childless HTML tag.
 
-Some possible expansions to our regular expression:
+Some possible expansions to functionality:
 * Other formats for writing ingredients, for example, "Flour, 1 cup".
+* Temperature conversions
