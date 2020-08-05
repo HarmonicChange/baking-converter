@@ -10,10 +10,8 @@ var matchingRegex = assembleRegexFromVocab();
 
 // Loop through innerHTML and find phrases that we will convert
 for (var i = 0; i < filteredHTML.length; i++) {
-  var matchingStringArr = filteredHTML[i].innerHTML.match(new RegExp(matchingRegex));
-  if(matchingStringArr != null) {
-    console.log(matchingStringArr);
-  }
+  var matchesWithGroups = [...filteredHTML[i].innerHTML.matchAll(new RegExp(matchingRegex))];
+  console.log(matchesWithGroups);
 }
 
 // Uses vocabulary we define to build a regular expression for detecting our desired phrases.
@@ -24,7 +22,8 @@ function assembleRegexFromVocab () {
       "teaspoons", "teaspoon", "tspns", "tspn", "tsp",
       "tablespoons", "tablespoon", "tbspn", "tbsp"];
   var ingredients_vocab = ["bread\\ flour", "cake\\ flour", "all\\ purpose\\ flour", "flour",
-      "brown\\ sugar", "granulated\\ sugar", "cane\\ sugar", "sugar"];
+      "brown\\ sugar", "granulated\\ sugar", "cane\\ sugar", "sugar",
+      "butter"];
 
   // Assemble a regex string that will match "[fraction/digit] [measurement vocab] [ingredient vocab]"
   var myRegexString = "(\\d{1,2}\\/\\d{1,2}|\\d{1,2}) ("; // Start with a fraction or digit, double backslashes needed as escape
