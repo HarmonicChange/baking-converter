@@ -11,14 +11,13 @@ var matchingRegex = assembleRegexFromVocab();
 // Loop through innerHTML and find phrases that we will convert
 for (var i = 0; i < filteredHTML.length; i++) {
   var matchesWithGroups = [...filteredHTML[i].innerHTML.matchAll(new RegExp(matchingRegex))];
-  console.log(matchesWithGroups);
+  console.log("1: " + matchesWithGroups[1].parseFloat() + " , 2: " matchesWithGroups[2] + " , 3: " + matchesWithGroups[3]);
 }
 
 // Uses vocabulary we define to build a regular expression for detecting our desired phrases.
 function assembleRegexFromVocab () {
   // Make sure to start with the LONGEST version of the word first!
   var measurements_vocab = ["cups", "cup",
-      "ounces", "ounce", "oz",
       "teaspoons", "teaspoon", "tspns", "tspn", "tsp",
       "tablespoons", "tablespoon", "tbspn", "tbsp"];
   var ingredients_vocab = ["bread\\ flour", "cake\\ flour", "all\\ purpose\\ flour", "flour",
@@ -46,4 +45,17 @@ function assembleRegexFromVocab () {
 
   // Return the string as a regular expression.
   return new RegExp(myRegexString, "ig"); // i = case-insensitive, 'g' = global search (find all matches)
+}
+
+function conversionLibrary(quantity, ingredient, convertFrom, convertTo) {
+  //All densities in g/mL
+  var FLOUR_DENSITY = 0.593
+  var WHITE_GRANULATED_SUGAR_DENSITY = 0.85
+
+  //Converting any volume to mL
+  var CUPS_TO_ML = 236.588
+  var TSP_TO_ML = 4.929
+  var TBSP_TO_ML = 14.787
+
+  if(convertFrom == )
 }
