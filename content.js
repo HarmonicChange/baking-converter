@@ -3,7 +3,6 @@ var htmlTagsAsArray = Array.prototype.slice.call(allHTMLTags); // Converts to ar
 
 // Keep HTML that (1) has no children (2) has innerHTML and (3) is not a script tag
 var filteredHTML = htmlTagsAsArray.filter(node => node.childElementCount == 0 && node.innerHTML && node.tagName != "SCRIPT");
-//console.log(filteredHTML);
 
 // Assemble regular expression from defined vocabulary
 var matchingRegex = assembleRegexFromVocab();
@@ -11,7 +10,14 @@ var matchingRegex = assembleRegexFromVocab();
 // Loop through innerHTML and find phrases that we will convert
 for (var i = 0; i < filteredHTML.length; i++) {
   var matchesWithGroups = [...filteredHTML[i].innerHTML.matchAll(new RegExp(matchingRegex))];
-  console.log("1: " + matchesWithGroups[1].parseFloat() + " , 2: " matchesWithGroups[2] + " , 3: " + matchesWithGroups[3]);
+
+  if(matchesWithGroups.length > 0) { // If we found a match
+    var gramsEquivalent = conversionLibrary(parseFloat(matchesWithGroups[0][1]), matchesWithGroups[0][3], matchesWithGroups[0][2], 'g');
+    var replacementText = matchesWithGroups[0][1] + " " + matchesWithGroups[0][2] + " (" + gramsEquivalent.toString() + " g) " + matchesWithGroups[0][3];
+    //filteredHTML[i].innerHTML.replace(matchesWithGroups[0][0], replacementText);
+    filteredHTML[i].innerHTML = filteredHTML[i].innerHTML.replace(matchesWithGroups[0][0], replacementText);
+    console.log(filteredHTML[i].innerHTML);
+  }
 }
 
 // Uses vocabulary we define to build a regular expression for detecting our desired phrases.
@@ -20,8 +26,8 @@ function assembleRegexFromVocab () {
   var measurements_vocab = ["cups", "cup",
       "teaspoons", "teaspoon", "tspns", "tspn", "tsp",
       "tablespoons", "tablespoon", "tbspn", "tbsp"];
-  var ingredients_vocab = ["bread\\ flour", "cake\\ flour", "all\\ purpose\\ flour", "flour",
-      "brown\\ sugar", "granulated\\ sugar", "cane\\ sugar", "sugar",
+  var ingredients_vocab = ["bread\\ flour", "cake\\ flour", "all\\ purpose\\ flour", "all-purpose flour", "flour",
+      "brown\\ sugar", "granulated\\ sugar", "cane\\ sugar", "white \\ sugar", "sugar",
       "butter"];
 
   // Assemble a regex string that will match "[fraction/digit] [measurement vocab] [ingredient vocab]"
@@ -48,14 +54,36 @@ function assembleRegexFromVocab () {
 }
 
 function conversionLibrary(quantity, ingredient, convertFrom, convertTo) {
-  //All densities in g/mL
-  var FLOUR_DENSITY = 0.593
-  var WHITE_GRANULATED_SUGAR_DENSITY = 0.85
+  // All densities in g/mL
+  const FLOUR_DENSITY = 0.593;
+  const WHITE_GRANULATED_SUGAR_DENSITY = 0.85;
+  const BUTTER_DENSITY = 0.911;
 
-  //Converting any volume to mL
-  var CUPS_TO_ML = 236.588
-  var TSP_TO_ML = 4.929
-  var TBSP_TO_ML = 14.787
+  // Converting any volume to mL
+  const CUPS_TO_ML = 236.588;
+  const TSP_TO_ML = 4.929;
+  const TBSP_TO_ML = 14.787;
 
-  if(convertFrom == )
+  // Converting grams to any weight
+
+  // Convert to mL
+  var multiplier = 1;
+  if (convertFrom.includes("cup")) {
+    multiplier *= CUPS_TO_ML;
+  } else if (convertFrom.includes("tsp") || convertFrom.includes("teaspoon")) {
+    multiplier *= TSP_TO_ML;
+  } else if (convertFrom.includes("tbsp") || convertFrom.includes("tablespoon")) {
+    multiplier *= TBSP_TO_ML;
+  }
+
+  // Convert to grams
+  if (ingredient.includes("flour")) {
+    multiplier *= FLOUR_DENSITY;
+  } else if (ingredient.includes("sugar")) {
+    multiplier *= WHITE_GRANULATED_SUGAR_DENSITY;
+  } else if (ingredient.includes("butter")) {
+    multiplier *= BUTTER_DENSITY;
+  }
+
+  return Math.round(quantity * multiplier);
 }
