@@ -14,9 +14,7 @@ for (var i = 0; i < filteredHTML.length; i++) {
   if(matchesWithGroups.length > 0) { // If we found a match
     var gramsEquivalent = conversionLibrary(parseFloat(matchesWithGroups[0][1]), matchesWithGroups[0][3], matchesWithGroups[0][2], 'g');
     var replacementText = matchesWithGroups[0][1] + " " + matchesWithGroups[0][2] + " (" + gramsEquivalent.toString() + " g) " + matchesWithGroups[0][3];
-    //filteredHTML[i].innerHTML.replace(matchesWithGroups[0][0], replacementText);
     filteredHTML[i].innerHTML = filteredHTML[i].innerHTML.replace(matchesWithGroups[0][0], replacementText);
-    console.log(filteredHTML[i].innerHTML);
   }
 }
 
@@ -26,9 +24,10 @@ function assembleRegexFromVocab () {
   var measurements_vocab = ["cups", "cup",
       "teaspoons", "teaspoon", "tspns", "tspn", "tsp",
       "tablespoons", "tablespoon", "tbspn", "tbsp"];
-  var ingredients_vocab = ["bread\\ flour", "cake\\ flour", "all\\ purpose\\ flour", "all-purpose flour", "flour",
+  var ingredients_vocab = ["bread\\ flour", "cake\\ flour", "all\\ purpose\\ flour", "all-purpose\\ flour", "flour",
       "brown\\ sugar", "granulated\\ sugar", "cane\\ sugar", "white \\ sugar", "sugar",
-      "butter"];
+      "unsalted\\ butter", "salted\\ butter", "butter",
+      "whole\\ milk", "milk"];
 
   // Assemble a regex string that will match "[fraction/digit] [measurement vocab] [ingredient vocab]"
   var myRegexString = "(\\d{1,2}\\/\\d{1,2}|\\d{1,2}) ("; // Start with a fraction or digit, double backslashes needed as escape
@@ -57,7 +56,9 @@ function conversionLibrary(quantity, ingredient, convertFrom, convertTo) {
   // All densities in g/mL
   const FLOUR_DENSITY = 0.593;
   const WHITE_GRANULATED_SUGAR_DENSITY = 0.85;
+  const BROWN_SUGAR_DENSITY = 0.93;
   const BUTTER_DENSITY = 0.911;
+  const MILK_DENSITY = 1.026;
 
   // Converting any volume to mL
   const CUPS_TO_ML = 236.588;
@@ -79,10 +80,14 @@ function conversionLibrary(quantity, ingredient, convertFrom, convertTo) {
   // Convert to grams
   if (ingredient.includes("flour")) {
     multiplier *= FLOUR_DENSITY;
+  } else if (ingredient.includes("brown sugar")) {
+    multiplier *= BROWN_SUGAR_DENSITY;
   } else if (ingredient.includes("sugar")) {
     multiplier *= WHITE_GRANULATED_SUGAR_DENSITY;
   } else if (ingredient.includes("butter")) {
     multiplier *= BUTTER_DENSITY;
+  } else if (ingredient.includes("milk")) {
+    multiplier *= MILK_DENSITY;
   }
 
   return Math.round(quantity * multiplier);
